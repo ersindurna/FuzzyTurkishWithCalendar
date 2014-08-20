@@ -1,0 +1,71 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "ersin.durna@gmail.com",
+    "longName": "FuzzyTRErsinWithCalendar",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "images/calendar_ios_Small_Chromium.png",
+                "name": "IMAGE_CAL",
+                "type": "png"
+            },
+            {
+                "file": "fonts/twcenmt_light.ttf",
+                "name": "FONT_TWCENMT_LIGHT_39",
+                "type": "font"
+            },
+            {
+                "file": "images/Bluet_notcon.png",
+                "name": "IMAGE_BLUETOOTH_NOT_CONNECTED",
+                "type": "png"
+            },
+            {
+                "file": "images/Bluet_con.png",
+                "name": "IMAGE_BLUETOOTH_CONNECTED",
+                "type": "png"
+            },
+            {
+                "file": "images/battery_75.png",
+                "name": "IMAGE_BATTERY_75",
+                "type": "png"
+            },
+            {
+                "file": "images/battery_50.png",
+                "name": "IMAGE_BATTERY_50",
+                "type": "png"
+            },
+            {
+                "file": "images/battery_25.png",
+                "name": "IMAGE_BATTERY_25",
+                "type": "png"
+            },
+            {
+                "file": "images/battery_20.png",
+                "name": "IMAGE_BATTERY_20",
+                "type": "png"
+            },
+            {
+                "file": "images/battery_full.png",
+                "name": "IMAGE_BATTERY_FULL",
+                "type": "png"
+            },
+            {
+                "file": "images/MyWatchfaceIcon.png",
+                "menuIcon": true,
+                "name": "IMAGE_ICON",
+                "type": "png"
+            }
+        ]
+    },
+    "shortName": "FuzzyClockwCalTR",
+    "uuid": "52da3499-3647-486d-b97b-d187c023ccdd",
+    "versionCode": 1,
+    "versionLabel": "4.2",
+    "watchapp": {
+        "watchface": true
+    }
+}
