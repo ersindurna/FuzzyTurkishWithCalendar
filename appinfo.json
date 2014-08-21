@@ -61,10 +61,10 @@
             }
         ]
     },
-    "shortName": "FuzzyClockwCalTR",
+    "shortName": "NewFuzzyClckwCalTR",
     "uuid": "52da3499-3647-486d-b97b-d187c023ccdd",
     "versionCode": 1,
-    "versionLabel": "4.2",
+    "versionLabel": "5.0",
     "watchapp": {
         "watchface": true
     }

@@ -6,12 +6,14 @@
   
 
 Window *window;
-TextLayer *text_layer,*batterytext_layer;
+TextLayer *text_layer,*text_layer_m,*batterytext_layer;
 TextLayer *fuzzy_text_layer_1,*fuzzy_text_layer_2,*fuzzy_text_layer_3;
 static TextLayer *calendar_day_text_layer,*calendar_day_no_text_layer;
 static TextLayer *calendar_month_text_layer;
 
 char buffer[] = "00:00";
+char buffer_h[] = "00";
+char buffer_m[] = ":00";
 
 #define LINE_BUFFER_SIZE 50
 static char daybuffer[LINE_BUFFER_SIZE];
@@ -61,6 +63,8 @@ void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   //Here we will update the watchface display
   //Format the buffer string using tick_time as the time source
   strftime(buffer, sizeof("00:00"), "%H:%M", tick_time);
+  strftime(buffer_h, sizeof("00"), "%H", tick_time);
+  strftime(buffer_m, sizeof(":00"), ":%M", tick_time);
   int dakika = tick_time->tm_min;
   int saat = tick_time->tm_hour;
   if (!(dakika %5) || (dakika == 58) || (dakika == 2)) {
@@ -69,7 +73,8 @@ void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
     text_layer_set_text(fuzzy_text_layer_2, new_time.line2);
     text_layer_set_text(fuzzy_text_layer_3, new_time.line3);
     }
-  text_layer_set_text(text_layer, buffer);
+  text_layer_set_text(text_layer, buffer_h);
+  text_layer_set_text(text_layer_m, buffer_m);
 }
 void update_fuzzy_watch() {
   temp = time(NULL);
@@ -120,7 +125,7 @@ static void handle_battery(BatteryChargeState charge_state) {
   if (charge_state.is_charging) {
     snprintf(battery_text, sizeof(battery_text), "+%d", charge_state.charge_percent);
   } else {
-	  snprintf(battery_text, sizeof(battery_text), "%% %d", charge_state.charge_percent);
+	  snprintf(battery_text, sizeof(battery_text), "%%%d", charge_state.charge_percent);
 	  if (charge_state.charge_percent==20){
 	  	vibes_double_pulse();
 	  }else if(charge_state.charge_percent==10){
@@ -165,17 +170,8 @@ static void handle_appfocus(bool in_focus){
 void window_load(Window *window)
 {
   Layer *rootLayer = window_get_root_layer(window);
-  //We will create the creation of windows elements here!
-  //WatchLayer
-  text_layer = text_layer_create(GRect(0, 0, 144, 168));
-  text_layer_set_background_color(text_layer, GColorBlack);
-  text_layer_set_text_color(text_layer, GColorClear);
-  text_layer_set_text_alignment(text_layer, GTextAlignmentLeft);
-  text_layer_set_font(text_layer,fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
-  layer_add_child(rootLayer, (Layer*) text_layer);
-  
   //Fuzzy Watch
-  fuzzy_text_layer_1 = text_layer_create(GRect(40, 0, 104, 60));
+  fuzzy_text_layer_1 = text_layer_create(GRect(0, 0, 144, 168));
   text_layer_set_text_color(fuzzy_text_layer_1, GColorClear);
   text_layer_set_background_color(fuzzy_text_layer_1, GColorBlack);
   text_layer_set_font(fuzzy_text_layer_1, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
@@ -183,33 +179,31 @@ void window_load(Window *window)
   layer_add_child(rootLayer,(Layer*) fuzzy_text_layer_1); //text_layer_get_layer(fuzzy_text_layer_1));
   
   
-  fuzzy_text_layer_2 = text_layer_create(GRect(20, 40, 124, 90));
+  fuzzy_text_layer_2 = text_layer_create(GRect(20, 30, 124, 90));
   text_layer_set_text_color(fuzzy_text_layer_2, GColorClear);
   text_layer_set_background_color(fuzzy_text_layer_2, GColorBlack);
   text_layer_set_font(fuzzy_text_layer_2, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
   text_layer_set_text_alignment(fuzzy_text_layer_2, GTextAlignmentRight);
   layer_add_child(rootLayer,(Layer*) fuzzy_text_layer_2); //text_layer_get_layer(fuzzy_text_layer_2));
   
-  fuzzy_text_layer_3 = text_layer_create(GRect(20, 80, 124, 90));
+  fuzzy_text_layer_3 = text_layer_create(GRect(20, 60, 124, 90));
   text_layer_set_text_color(fuzzy_text_layer_3, GColorClear);
   text_layer_set_background_color(fuzzy_text_layer_3, GColorBlack);
   text_layer_set_font(fuzzy_text_layer_3, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
   text_layer_set_text_alignment(fuzzy_text_layer_3, GTextAlignmentRight);
   layer_add_child(rootLayer,(Layer*) fuzzy_text_layer_3); //text_layer_get_layer(fuzzy_text_layer_3));
   
-  
   //Battery Layer - thanks to pi-king
   //Text
-  batterytext_layer = text_layer_create(GRect(10,35,30,65));
+  batterytext_layer = text_layer_create(GRect(0,0,29,20));
   text_layer_set_text_color(batterytext_layer, GColorWhite);
-  text_layer_set_background_color(batterytext_layer, GColorBlack);
+  text_layer_set_background_color(batterytext_layer, GColorClear);
   text_layer_set_font(batterytext_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
   text_layer_set_text_alignment(batterytext_layer, GTextAlignmentLeft);
   layer_add_child(rootLayer,(Layer*) text_layer_get_layer(batterytext_layer));
-  
-  handle_battery(battery_state_service_peek());
+   handle_battery(battery_state_service_peek());
   //Icon    
-  battery_rect = GRect(0,10,33,43);
+  battery_rect = GRect(30,0,33,15);
   batteryLayer = bitmap_layer_create(battery_rect);
   bitmap_layer_set_bitmap(batteryLayer, battery);
 	layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(batteryLayer));
@@ -251,6 +245,22 @@ void window_load(Window *window)
   text_layer_set_text_alignment(calendar_month_text_layer, GTextAlignmentCenter);
   layer_add_child(rootLayer,(Layer*) text_layer_get_layer(calendar_month_text_layer));
 
+  //We will create the creation of windows elements here!
+  //WatchLayer Hour
+  text_layer = text_layer_create(GRect(75, 100, 69, 68));
+  text_layer_set_background_color(text_layer, GColorBlack);
+  text_layer_set_text_color(text_layer, GColorClear);
+  text_layer_set_text_alignment(text_layer, GTextAlignmentRight);
+  text_layer_set_font(text_layer,fonts_get_system_font(FONT_KEY_BITHAM_34_MEDIUM_NUMBERS)); //FONT_KEY_GOTHIC_18_BOLD));
+  layer_add_child(rootLayer, (Layer*) text_layer);
+  //WatchLayer minute
+  text_layer_m = text_layer_create(GRect(75, 134, 69, 34));
+  text_layer_set_background_color(text_layer_m, GColorBlack);
+  text_layer_set_text_color(text_layer_m, GColorClear);
+  text_layer_set_text_alignment(text_layer_m, GTextAlignmentRight);
+  text_layer_set_font(text_layer_m,fonts_get_system_font(FONT_KEY_BITHAM_34_MEDIUM_NUMBERS)); //FONT_KEY_GOTHIC_18_BOLD));
+  layer_add_child(rootLayer, (Layer*) text_layer_m);
+ 
   //Get a time structure so that the watchface does not start blank
   //Manualy call the tick_handler when the window is loading
   temp = time(NULL);
